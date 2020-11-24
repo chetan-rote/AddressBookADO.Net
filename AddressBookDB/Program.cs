@@ -18,9 +18,35 @@ namespace AddressBookDB
         /// <param name="args">The arguments.</param>
         static void Main(string[] args)
         {
+            int choice;
             Console.WriteLine("Welcome to Address Book Database.");
             AddressBookRepository repository = new AddressBookRepository();
-            repository.RetrieveFromDatabase();
+            do
+            {
+                Console.WriteLine("1.Retrieve all data.\n2.Update Contact.\n3.Exit.");
+                choice = Convert.ToInt32(Console.ReadLine());
+                switch (choice)
+                {
+                    case 1:
+                        repository.RetrieveFromDatabase();
+                        break;
+                    case 2:
+                        Console.WriteLine("Enter name");
+                        string[] name = Console.ReadLine().Split(" ");
+                        Console.WriteLine("Enter phone no");
+                        string phoneNo = Console.ReadLine();
+                        repository.UpdateContact(name, phoneNo);
+                        break;
+                    case 3:
+                        Console.WriteLine("Thank you");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid Option");
+                        break;
+                }
+            }
+            while (choice != 3);
+            Console.ReadKey();
         }
     }
 }
