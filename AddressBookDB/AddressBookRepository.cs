@@ -73,6 +73,51 @@ namespace AddressBookDB
             {
                 Console.WriteLine(ex.Message);
             }
+            /// Always ensuring the closing of the connection.
+            finally
+            {
+                connection.Close();
+            }
+            return false;
+        }
+        /// <summary>
+        /// UC2 Updates the contact.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="phoneNo"></param>
+        /// <returns></returns>
+        public bool UpdateContact(string[] name, string phoneNo)
+        {
+            connection = new SqlConnection(connectionString);
+            try
+            {
+                using (connection)
+                {
+                    /// Updating details using the stored procedure.
+                    SqlCommand command = new SqlCommand("SpUpdateDetails", this.connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@FirstName", name[0]);
+                    command.Parameters.AddWithValue("@LastName", name[1]);
+                    command.Parameters.AddWithValue("@PhoneNo", phoneNo);
+                    /// Opening the connection to start mapping.
+                    this.connection.Open();
+                    /// Storing the result of the executed query.
+                    var result = command.ExecuteNonQuery();
+                    /// Checks for the rows.
+                    if (result != 0)
+                    {
+                        Console.WriteLine("Contact updated successfully");
+                        return true;
+                    }                    
+                    Console.WriteLine("No such contact");
+                    return false;
+                }
+            }
+            /// Catching the exception.
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             /// Alway ensuring the closing of the connection.
             finally
             {
