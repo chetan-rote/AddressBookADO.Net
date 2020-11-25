@@ -145,8 +145,8 @@ namespace AddressBookDB
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@StartDate", StartDate);
                     command.Parameters.AddWithValue("@EndDate", EndDate);
+                    /// Opening the connection to start mapping.
                     this.connection.Open();
-
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
                     {
@@ -172,6 +172,51 @@ namespace AddressBookDB
                         Console.WriteLine("No such records found");
                     }
 
+                }
+            }
+            /// Catching the exception.
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            /// Alway ensuring the closing of the connection.
+            finally
+            {
+                connection.Close();
+            }
+        }
+        /// <summary>
+        /// Gets the count of contact by city and state.
+        /// </summary>
+        public void GetCountByCityOrState()
+        {
+            connection = new SqlConnection(connectionString);
+            try
+            {
+                using (connection)
+                {
+                    /// Gets count by city and state using stored procedure.
+                    SqlCommand command = new SqlCommand("SpGetCountByCityState", this.connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    /// Opening the connection to start mapping.
+                    this.connection.Open();
+                    /// Reads the data.
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            string state = reader.GetString(0);
+                            string city = reader.GetString(1);
+                            int count = reader.GetInt32(2);
+
+                            Console.WriteLine(state + "  " + city + "  " + count);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Table is empty");
+                    }
                 }
             }
             /// Catching the exception.
