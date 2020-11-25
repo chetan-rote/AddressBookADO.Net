@@ -125,5 +125,65 @@ namespace AddressBookDB
             }
             return false;
         }
+        /// <summary>
+        /// Get contacts added in a particular date range.
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        public void GetContactsByDateRange(string startDate, string endDate)
+        {
+            connection = new SqlConnection(connectionString);
+            try
+            {
+                DateTime StartDate = Convert.ToDateTime(startDate);
+                DateTime EndDate = Convert.ToDateTime(endDate);
+                using (connection)
+                {
+                    /// Gets contacts by date range using the stored procedure.
+                    SqlCommand command = new SqlCommand("SpGetContactsByDateRange", this.connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@StartDate", StartDate);
+                    command.Parameters.AddWithValue("@EndDate", EndDate);
+                    this.connection.Open();
+
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            Contact c = new Contact();
+                            c.Type = reader.GetString(0);
+                            c.FirstName = reader.GetString(1);
+                            c.LastName = reader.GetString(2);
+                            c.Address = reader.GetString(3);
+                            c.ZipCode = reader.GetString(4);
+                            c.PhoneNo = reader.GetString(5);
+                            c.Email = reader.GetString(6);
+                            c.City = reader.GetString(7);
+                            c.State = reader.GetString(8);
+
+                            Console.WriteLine(c.Type + "  " + c.FirstName + "  " + c.LastName + "  " + c.Address + "  " + c.ZipCode + "  " +
+                                c.City + "  " + c.State + "  " + c.PhoneNo + "  " + c.Email);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No such records found");
+                    }
+
+                }
+            }
+            /// Catching the exception.
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            /// Alway ensuring the closing of the connection.
+            finally
+            {
+                connection.Close();
+            }
+        }
     }
 }
