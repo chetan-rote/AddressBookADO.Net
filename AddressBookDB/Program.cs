@@ -23,7 +23,8 @@ namespace AddressBookDB
             AddressBookRepository repository = new AddressBookRepository();
             do
             {
-                Console.WriteLine("1.Retrieve all data.\n2.Update Contact.\n3.Get Contacts by date range.\n4.Exit.");
+                Console.WriteLine("1.Retrieve all data.\n2.Update Contact.\n3.Get Contacts by date range." +
+                                    "\n4.Get count by City and State.\n5.Exit.");
                 choice = Convert.ToInt32(Console.ReadLine());
                 switch (choice)
                 {
@@ -45,6 +46,9 @@ namespace AddressBookDB
                         repository.GetContactsByDateRange(startDate, endDate);
                         break;
                     case 4:
+                        repository.GetCountByCityOrState();
+                        break;
+                    case 5:
                         Console.WriteLine("Thank you");
                         break;
                     default:
@@ -52,7 +56,7 @@ namespace AddressBookDB
                         break;
                 }
             }
-            while (choice != 4);
+            while (choice != 5);
             Console.ReadKey();
         }
     }
