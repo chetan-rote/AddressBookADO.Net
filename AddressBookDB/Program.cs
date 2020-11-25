@@ -24,7 +24,7 @@ namespace AddressBookDB
             do
             {
                 Console.WriteLine("1.Retrieve all data.\n2.Update Contact.\n3.Get Contacts by date range." +
-                                    "\n4.Get count by City and State.\n5.Exit.");
+                                    "\n4.Get count by City and State.\n5.Add new contact.\n6.Exit.");
                 choice = Convert.ToInt32(Console.ReadLine());
                 switch (choice)
                 {
@@ -49,6 +49,28 @@ namespace AddressBookDB
                         repository.GetCountByCityOrState();
                         break;
                     case 5:
+                        Contact contact = new Contact();
+                        Console.WriteLine("Enter Contact Type");
+                        contact.Type = Console.ReadLine();
+                        Console.WriteLine("Enter First Name");
+                        contact.FirstName = Console.ReadLine();
+                        Console.WriteLine("Enter Last Name");
+                        contact.LastName = Console.ReadLine();
+                        Console.WriteLine("Enter Address");
+                        contact.Address = Console.ReadLine();
+                        Console.WriteLine("Enter ZipCode");
+                        contact.ZipCode = Console.ReadLine();
+                        Console.WriteLine("Enter City");
+                        contact.City = Console.ReadLine();
+                        Console.WriteLine("Enter State");
+                        contact.State = Console.ReadLine();
+                        Console.WriteLine("Enter PhoneNo");
+                        contact.PhoneNo = Console.ReadLine();
+                        Console.WriteLine("Enter Email");
+                        contact.Email = Console.ReadLine();
+                        repository.AddContact(contact);
+                        break;
+                    case 6:
                         Console.WriteLine("Thank you");
                         break;
                     default:
