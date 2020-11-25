@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -118,7 +119,7 @@ namespace AddressBookDB
             {
                 Console.WriteLine(e.Message);
             }
-            /// Alway ensuring the closing of the connection.
+            /// Always ensuring the closing of the connection.
             finally
             {
                 connection.Close();
@@ -179,7 +180,7 @@ namespace AddressBookDB
             {
                 Console.WriteLine(e.Message);
             }
-            /// Alway ensuring the closing of the connection.
+            /// Always ensuring the closing of the connection.
             finally
             {
                 connection.Close();
@@ -224,11 +225,64 @@ namespace AddressBookDB
             {
                 Console.WriteLine(e.Message);
             }
-            /// Alway ensuring the closing of the connection.
+            /// Always ensuring the closing of the connection.
             finally
             {
                 connection.Close();
             }
+        }
+        /// <summary>
+        /// Add contact to database
+        /// </summary>
+        /// <param name="contact"></param>
+        public bool AddContact(Contact contact)
+        {
+            connection = new SqlConnection(connectionString);
+            try
+            {
+                using (connection)
+                {
+                    SqlCommand command = new SqlCommand("SpAddContactDetails", this.connection);
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@FirstName", contact.FirstName);
+                    command.Parameters.AddWithValue("@LastName", contact.LastName);
+                    command.Parameters.AddWithValue("@PhoneNo", contact.PhoneNo);
+                    command.Parameters.AddWithValue("@Address", contact.Address);
+                    command.Parameters.AddWithValue("@ZipCode", contact.ZipCode);
+                    command.Parameters.AddWithValue("@City", contact.City);
+                    command.Parameters.AddWithValue("@State", contact.State);
+                    command.Parameters.AddWithValue("@Email", contact.Email);
+                    command.Parameters.AddWithValue("@Type", contact.Type);
+                    command.Parameters.AddWithValue("@Date", DateTime.Today);
+                    command.Parameters.Add("@CId", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    /// Opening the connection to start mapping.
+                    this.connection.Open();
+                    /// Gets count of updates rows.
+                    var result = command.ExecuteNonQuery();
+                    this.connection.Close();
+                    if (result != 0)
+                    {
+                        Console.WriteLine("Employee added successfully");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Addition failed");
+                        return false;
+                    }
+                }
+            }
+            /// Catching the exception.
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            /// Always ensuring the closing of the connection.
+            finally
+            {
+                connection.Close();
+            }
+            return false;
         }
     }
 }
