@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AddressBookDB
 {
@@ -16,7 +17,6 @@ namespace AddressBookDB
         /// The contact list to store contacts.
         /// </summary>
         List<Contact> contacList = new List<Contact>();
-        int count;
         /// <summary>
         /// UC1 Retrieves all data from database.
         /// </summary>
@@ -27,18 +27,13 @@ namespace AddressBookDB
             try
             {
                 using (connection)
-                {
-                    ///Query to get all data from DB.
-                    string query = "Select Type,FirstName,LastName,Address,Contact.ZipCode,PhoneNo,Email,City,State" +
-                                    " from AddressBook Inner JOIN  AddressBookContact On AddressBook.BookId = AddressBookContact.BookId" +
-                                    " Inner Join Contact ON AddressBookContact.CId = Contact.CId" +
-                                    " Inner Join Zip ON Contact.ZipCode = Zip.ZipCode;";
+                {                    
                     /// Impementing the command on the connection fetched database table.
-                    SqlCommand cmd = new SqlCommand(query, connection);
+                    SqlCommand command = new SqlCommand("spGetData", this.connection);
                     /// Opening the connection to start mapping.
                     this.connection.Open();
                     /// executing the sql data reader to fetch the records.
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    SqlDataReader reader = command.ExecuteReader();
                     if (reader.HasRows)
                     {
                         /// Moving to the next record from the table
@@ -87,7 +82,7 @@ namespace AddressBookDB
         /// <param name="name"></param>
         /// <param name="phoneNo"></param>
         /// <returns></returns>
-        public bool UpdateContact(string[] name, string phoneNo)
+        public bool UpdateContact(string firstName, string lastName, string phoneNo)
         {
             connection = new SqlConnection(connectionString);
             try
@@ -95,10 +90,10 @@ namespace AddressBookDB
                 using (connection)
                 {
                     /// Updating details using the stored procedure.
-                    SqlCommand command = new SqlCommand("SpUpdateDetails", this.connection);
+                    SqlCommand command = new SqlCommand("spUpdateDetails", this.connection);
                     command.CommandType = System.Data.CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@FirstName", name[0]);
-                    command.Parameters.AddWithValue("@LastName", name[1]);
+                    command.Parameters.AddWithValue("@FirstName", firstName);
+                    command.Parameters.AddWithValue("@LastName", lastName);
                     command.Parameters.AddWithValue("@PhoneNo", phoneNo);
                     /// Opening the connection to start mapping.
                     this.connection.Open();
@@ -109,7 +104,7 @@ namespace AddressBookDB
                     {
                         Console.WriteLine("Contact updated successfully");
                         return true;
-                    }                    
+                    }
                     Console.WriteLine("No such contact");
                     return false;
                 }
@@ -242,7 +237,7 @@ namespace AddressBookDB
             {
                 using (connection)
                 {
-                    SqlCommand command = new SqlCommand("SpAddContactDetails", this.connection);
+                    SqlCommand command = new SqlCommand("spAddContact", this.connection);
                     command.CommandType = System.Data.CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@FirstName", contact.FirstName);
                     command.Parameters.AddWithValue("@LastName", contact.LastName);
@@ -254,7 +249,6 @@ namespace AddressBookDB
                     command.Parameters.AddWithValue("@Email", contact.Email);
                     command.Parameters.AddWithValue("@Type", contact.Type);
                     command.Parameters.AddWithValue("@Date", DateTime.Today);
-                    command.Parameters.Add("@CId", SqlDbType.Int).Direction = ParameterDirection.Output;
                     /// Opening the connection to start mapping.
                     this.connection.Open();
                     /// Gets count of updates rows.
@@ -283,6 +277,28 @@ namespace AddressBookDB
                 connection.Close();
             }
             return false;
+        }
+        /// <summary>
+        /// Add multiple contacts to AddressBook using threads
+        /// </summary>
+        /// <param name="contactList"></param>
+        /// <returns>No of contacts added</returns>
+        public int AddMultipleContactsWithThread(List<Contact> contactList)
+        {
+            int count = 0;
+            contactList.ForEach(contact =>
+            {
+                count++;
+                Task task = new Task(() =>
+                {
+                    AddContact(contact);
+                }
+                );
+                task.Start();
+                task.Wait();
+            }
+            );
+            return count;
         }
     }
 }
