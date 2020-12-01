@@ -49,18 +49,6 @@
       "Type": "Friends"
     },
     {
-      "FirstName": "Shubham",
-      "LastName": "Dubey",
-      "ZipCode": "402511",
-      "Address": "Pitampura",
-      "City": "Bhopal",
-      "State": "Madhya Pradesh",
-      "PhoneNo": "7748562152",
-      "Email": "shubham@gmail.com",
-      "Type": "Profession",
-      "id": 5
-    },
-    {
       "FirstName": "Rugved",
       "LastName": "Jage",
       "ZipCode": "600125",

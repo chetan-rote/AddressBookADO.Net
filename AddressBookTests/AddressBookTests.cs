@@ -143,9 +143,12 @@ namespace AddressBookTests
             /// Checks the count is correct.
             Assert.AreEqual(6, dataResponse.Count);
         }
-
+        /// <summary>
+        /// UC 24
+        /// Given contact record on update should return updated contact. 
+        /// </summary>
         [TestMethod]
-        public void GivenEmployeeOnUpdate_ShoulReturnUpdatedEmployee()
+        public void GivenContacttOnUpdate_ShoulReturnUpdatedContact()
         {
             Contact contact = new Contact();
             contact.FirstName = "Shubham";
@@ -177,6 +180,21 @@ namespace AddressBookTests
             Contact dataResponse = JsonConvert.DeserializeObject<Contact>(restResponse.Content);
             Assert.AreEqual(contact.FirstName, dataResponse.FirstName);
             Assert.AreEqual(contact.City, dataResponse.City);
+            Console.WriteLine(restResponse.Content);
+        }
+        /// <summary>
+        /// UC 25
+        /// Given contact Id deletes the record with id and validates whether deleted or not.
+        /// </summary>
+        [TestMethod]
+        public void DeleteRecordOnAddressBook_ValidateRecordDeleted()
+        {
+            //Arrange
+            RestRequest restRequest = new RestRequest("/addressBook/5", Method.DELETE);
+            //Act
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            //Assert
+            Assert.AreEqual(restResponse.StatusCode, HttpStatusCode.OK);
             Console.WriteLine(restResponse.Content);
         }
     }
