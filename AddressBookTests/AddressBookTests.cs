@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using RestSharp;
 using System.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AddressBookTests
 {
@@ -103,6 +104,44 @@ namespace AddressBookTests
                     $"\nPhoneNo: {contact.PhoneNo}\nEmail: {contact.Email}\nAddress: {contact.Address}\nCity: {contact.City}" +
                     $"\nState: {contact.State}\nType: {contact.Type}\n");
             }
+        }
+        /// <summary>
+        /// UC23
+        /// Given the multiple data on post should return total count.
+        /// </summary>
+        [TestMethod]
+        public void GivenMultipleContacts_OnPost_ShouldReturnTotalCount()
+        {
+            List<Contact> contacts = new List<Contact>();
+            contacts.Add(new Contact { FirstName = "Shubham", LastName = "Dubey", ZipCode = "402511", Address = "Pitampura", City = "Indore", State = "Madhya Pradesh", PhoneNo = "8745960125", Email = "shubham@gmail.com", Type = "Profession"});
+            contacts.Add(new Contact { FirstName = "Rugved", LastName = "Jage", ZipCode = "600125", Address = "SakiNaka", City = "Heydrabad", State = "Telangana", PhoneNo = "9452660125", Email = "rugved@gmail.com", Type = "Friends" });
+            /// Iterating over the addressbook list to get each instance.
+            foreach (Contact contact in contacts)
+            {
+                //Arrange
+                /// Adding the request to post data to the rest API.
+                RestRequest request = new RestRequest("/addressBook", Method.POST);
+                JObject jObject = new JObject();
+                /// Adding the data attribute with data elements.
+                jObject.Add("FirstName", contact.FirstName);
+                jObject.Add("LastName", contact.LastName);
+                jObject.Add("ZipCode", contact.ZipCode);
+                jObject.Add("Address", contact.Address);
+                jObject.Add("City", contact.City);
+                jObject.Add("State", contact.State);
+                jObject.Add("PhoneNo", contact.PhoneNo);
+                jObject.Add("Email", contact.Email);
+                jObject.Add("Type", contact.Type);
+                request.AddParameter("application/json", jObject, ParameterType.RequestBody);
+                //Act
+                IRestResponse response = restClient.Execute(request);
+                //Assert
+                Assert.AreEqual(response.StatusCode, HttpStatusCode.Created);
+            }
+            IRestResponse restResponse = GetAddressBook();
+            List<Contact> dataResponse = JsonConvert.DeserializeObject<List<Contact>>(restResponse.Content);
+            /// Checks the count is correct.
+            Assert.AreEqual(6, dataResponse.Count);
         }
     }
 }
