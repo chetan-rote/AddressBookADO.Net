@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using RestSharp;
 using System.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AddressBookTests
 {
@@ -141,6 +142,42 @@ namespace AddressBookTests
             List<Contact> dataResponse = JsonConvert.DeserializeObject<List<Contact>>(restResponse.Content);
             /// Checks the count is correct.
             Assert.AreEqual(6, dataResponse.Count);
+        }
+
+        [TestMethod]
+        public void GivenEmployeeOnUpdate_ShoulReturnUpdatedEmployee()
+        {
+            Contact contact = new Contact();
+            contact.FirstName = "Shubham";
+            contact.LastName = "Dubey";
+            contact.ZipCode = "402511";
+            contact.Address = "Pitampura";
+            contact.City = "Bhopal";
+            contact.State = "Madhya Pradesh";
+            contact.PhoneNo = "7748562152";
+            contact.Email = "shubham@gmail.com";
+            contact.Type = "Profession";
+            //Arrange
+            RestRequest restRequest = new RestRequest("/addressBook/5", Method.PUT);
+            JObject jObject = new JObject();
+            jObject.Add("FirstName", contact.FirstName);
+            jObject.Add("LastName", contact.LastName);
+            jObject.Add("ZipCode", contact.ZipCode);            
+            jObject.Add("Address", contact.Address);
+            jObject.Add("City", contact.City);
+            jObject.Add("State", contact.State);
+            jObject.Add("PhoneNo", contact.PhoneNo);
+            jObject.Add("Email", contact.Email);
+            jObject.Add("Type", contact.Type);
+            restRequest.AddParameter("application/json", jObject, ParameterType.RequestBody);
+            //Act
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            //Assert
+            Assert.AreEqual(restResponse.StatusCode, HttpStatusCode.OK);
+            Contact dataResponse = JsonConvert.DeserializeObject<Contact>(restResponse.Content);
+            Assert.AreEqual(contact.FirstName, dataResponse.FirstName);
+            Assert.AreEqual(contact.City, dataResponse.City);
+            Console.WriteLine(restResponse.Content);
         }
     }
 }
