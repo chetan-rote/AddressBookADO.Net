@@ -1,0 +1,52 @@
+{
+	"addressBook": [
+		{
+			"id": 1,
+			"FirstName": "Aashish",
+			"LastName": "Patil",
+			"ZipCode": "412512",
+			"PhoneNumber": "8547963012",
+			"Email": "aashish@gmail.com",
+			"Address": "Chinchwad",
+			"City": "Pune",
+			"State": "Maharashtra",
+			"Type": "Friends"
+		},
+		{
+			"id": 2,
+			"FirstName": "Kunal",
+			"LastName": "Warke",
+			"ZipCode": "507221",
+			"PhoneNumber": "7548963012",
+			"Email": "kunal@gmail.com",
+			"Address": "Rk nagar",
+			"City": "Bangalore",
+			"State": "Karnataka",
+			"Type": "Profession"
+		},
+		{
+			"id": 3,
+			"FirstName": "Rajesh",
+			"LastName": "Yadav",
+			"ZipCode": "400112",
+			"PhoneNumber": "8965402153",
+			"Email": "rajesh@gmail.com",
+			"Address": "Bhayander",
+			"City": "Mumbai",
+			"State": "Maharashtra",
+			"Type": "Profession"
+		},
+		{
+			"id": 4,
+			"FirstName": "Rohit",
+			"LastName": "Patil",
+			"ZipCode": "110020",
+			"PhoneNumber": "7485201369",
+			"Email": "rohit@gmail.com",
+			"Address": "Kunj Vihar",
+			"City": "Delhi",
+			"State": "Delhi",
+			"Type": "Friends"
+		}
+	]
+}

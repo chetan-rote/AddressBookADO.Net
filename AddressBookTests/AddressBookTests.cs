@@ -2,12 +2,27 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AddressBookDB;
 using System;
 using System.Collections.Generic;
+using RestSharp;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace AddressBookTests
 {
     [TestClass]
     public class AddressBookTests
     {
+        RestClient restClient = new RestClient("http://localhost:4000");
+        /// <summary>
+        /// Gets the address book.
+        /// </summary>
+        /// <returns></returns>
+        private IRestResponse GetAddressBook()
+        {
+            RestRequest request = new RestRequest("/addressBook", Method.GET);
+
+            IRestResponse response = restClient.Execute(request);
+            return response;
+        }
         /// <summary>
         /// Given the retrieve contacts from database should return true.
         /// </summary>
@@ -68,6 +83,26 @@ namespace AddressBookTests
             addressBook.AddMultipleContactsWithThread(contacts);
             DateTime endTime = DateTime.Now;
             Console.WriteLine("Total time for execution of thread :" + (endTime - startTime));
+        }
+        /// <summary>
+        /// UC22
+        /// On calling addressbook to rest api should return records.
+        /// </summary>
+        [TestMethod]
+        public void OnCallingAddressBook_ReturnAddressBook()
+        {
+            //Act
+            IRestResponse restResponse = GetAddressBook();
+            //Assert
+            Assert.AreEqual(restResponse.StatusCode, HttpStatusCode.OK);
+            List<Contact> addressBookResponse = JsonConvert.DeserializeObject<List<Contact>>(restResponse.Content);
+            Assert.AreEqual(4, addressBookResponse.Count);
+            foreach (Contact contact in addressBookResponse)
+            {
+                Console.WriteLine($"First name: {contact.FirstName}\nLast name: {contact.LastName}\nZipCode: {contact.ZipCode}" +
+                    $"\nPhoneNo: {contact.PhoneNo}\nEmail: {contact.Email}\nAddress: {contact.Address}\nCity: {contact.City}" +
+                    $"\nState: {contact.State}\nType: {contact.Type}\n");
+            }
         }
     }
 }
